@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public List<List<char>> AlphabetTable = new List<List<char>>();
+
     private void Awake()
     { 
         if (Instance != null)
@@ -14,6 +17,24 @@ public class GameManager : MonoBehaviour
         }
         Instance = this; 
         DontDestroyOnLoad(transform.parent);
+
+        GenerateAlphabetTable();
+    }
+
+    private void GenerateAlphabetTable()
+    {
+        const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        for (int offset = 0; offset < alphabet.Length; offset++)
+        {
+            List<char> ligne = new List<char>();
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                int index = (i + offset) % alphabet.Length;
+                ligne.Add(alphabet[index]);
+            }
+            AlphabetTable.Add(ligne);
+        }
     }
     
     private string GetSceneByState()
