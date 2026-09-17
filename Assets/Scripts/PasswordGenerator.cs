@@ -18,6 +18,7 @@ public class PasswordGenerator : MonoBehaviour
     };
     
     public string MotActuel { get; private set; }
+    public string NombreActuel { get; private set; }
 
     private void Start()
     {
@@ -60,8 +61,8 @@ public class PasswordGenerator : MonoBehaviour
 
     public string GenerateRandomNumber() //genere un nombre en lettres
     {
-        MotActuel = _nombresEnLettres[Random.Range(0, _nombresEnLettres.Count)];
-        return MotActuel;
+        NombreActuel = _nombresEnLettres[Random.Range(0, _nombresEnLettres.Count)];
+        return NombreActuel;
     }
 
     public string GenerateRandomNumberEncrypted()  //nombre en lettre crypté avec césar
@@ -95,4 +96,6 @@ public class PasswordGenerator : MonoBehaviour
 
         return resultat;
     }
+
+    
 }

@@ -18,6 +18,7 @@ public class InputHandler : MonoBehaviour
 
     private void DisplayReactionToInput()
     {
+        
         reactionTextBox.text = "Réponse entrée : " + inputText;
         reactionGroup.SetActive(true);
     }

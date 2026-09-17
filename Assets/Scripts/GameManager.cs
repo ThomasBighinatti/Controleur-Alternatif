@@ -6,19 +6,23 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public List<List<char>> AlphabetTable = new List<List<char>>();
+    public List<List<char>> AlphabetTable =  new List<List<char>>();
 
     private void Awake()
     { 
         if (Instance != null)
         { 
-            Destroy(transform.parent.gameObject); 
+            Destroy(this.gameObject); 
             return;
         }
         Instance = this; 
-        DontDestroyOnLoad(transform.parent);
+        DontDestroyOnLoad(this.gameObject);
+    }
 
+    private void Start()
+    {
         GenerateAlphabetTable();
+        print(AlphabetTable);
     }
 
     private void GenerateAlphabetTable()
