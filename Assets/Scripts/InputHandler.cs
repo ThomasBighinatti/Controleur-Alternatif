@@ -11,31 +11,32 @@ public class InputHandler : MonoBehaviour
 
     public void GrabFromInputField(string input)
     {
-        inputText = input.ToUpper();
-        DisplayReactionToInput();
-        CheckWordGuessed();
+        inputText = input;
+        bool correct = CheckWordGuessed();
+        DisplayReactionToInput(correct);
+
+        if (correct)
+        {
+            passwordGenerator.GenerateNewChallenge(); //relance avec nouvelles fleches et nouveau mot mais meme grille
+            //TODO
+        }
     }
 
-    private void DisplayReactionToInput()
+    private void DisplayReactionToInput(bool correct)
     {
-        if (inputText == passwordGenerator.MotActuel)
-            Debug.Log("Bon mot");
-        else 
-            Debug.Log("pas bon mot");
-        reactionTextBox.text = "Réponse entrée : " + inputText;
+        reactionTextBox.text = correct
+            ? $"Bravo, la réponse était \"{passwordGenerator.MotActuel}\" ."
+            : $"Ce n'est pas : {inputText} — dommage."; //-20s sur timer
         reactionGroup.SetActive(true);
     }
 
-    private void CheckWordGuessed()
+    private bool CheckWordGuessed()
     {
         if (passwordGenerator == null)
         {
-            return;
+            return false;
         }
-        
-        if (string.Equals(inputText, passwordGenerator.MotActuel, System.StringComparison.OrdinalIgnoreCase))
-        {
-            passwordGenerator.GenerateRandomWord();
-        }
+
+        return string.Equals(inputText, passwordGenerator.MotActuel, System.StringComparison.OrdinalIgnoreCase);
     }
 }

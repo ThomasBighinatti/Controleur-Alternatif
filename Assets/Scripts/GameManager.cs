@@ -6,39 +6,60 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public List<List<char>> AlphabetTable =  new List<List<char>>();
+    private char[,] _alphabetTable = new char[6, 5];
+    private bool _alphabetTableReady;
 
     private void Awake()
     { 
         if (Instance != null)
         { 
-            Destroy(this.gameObject); 
+            Destroy(transform.parent.gameObject); 
             return;
         }
         Instance = this; 
-        DontDestroyOnLoad(this.gameObject);
-    }
+        DontDestroyOnLoad(transform.parent);
 
-    private void Start()
-    {
         GenerateAlphabetTable();
-        Debug.Log(string.Join(", ", AlphabetTable));;
+    }
+    
+    public char[,] GetAlphabetTable()
+    {
+        if (!_alphabetTableReady)
+        {
+            GenerateAlphabetTable();
+        }
+
+        return _alphabetTable;
     }
 
     private void GenerateAlphabetTable()
     {
         const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        for (int offset = 0; offset < alphabet.Length; offset++)
+        int rows = _alphabetTable.GetLength(0);
+        int cols = _alphabetTable.GetLength(1);
+        int totalCases = rows * cols;
+        
+        List<char> lettres = new List<char>(alphabet.ToCharArray());
+        while (lettres.Count < totalCases)
         {
-            List<char> ligne = new List<char>();
-            for (int i = 0; i < alphabet.Length; i++)
-            {
-                int index = (i + offset) % alphabet.Length;
-                ligne.Add(alphabet[index]);
-            }
-            AlphabetTable.Add(ligne);
+            lettres.Add(alphabet[Random.Range(0, alphabet.Length)]);
         }
+        
+        //je mélange je mélange je mélange (kaaris)
+        for (int i = lettres.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (lettres[i], lettres[j]) = (lettres[j], lettres[i]);
+        }
+
+        for (int i = 0; i < totalCases; i++)
+        {
+            int row = i / cols;
+            int col = i % cols;
+            _alphabetTable[row, col] = lettres[i];
+        }
+
+        _alphabetTableReady = true;
     }
     
     private string GetSceneByState()

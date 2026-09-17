@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ArrowDirection
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+
 public class PasswordGenerator : MonoBehaviour
 {
     
@@ -19,11 +27,31 @@ public class PasswordGenerator : MonoBehaviour
     
     public string MotActuel { get; private set; }
     public string NombreActuel { get; private set; }
+    public string MotCrypte { get; private set; }
+    public string NombreCrypte { get; private set; }
+    public List<ArrowDirection> FlechesActuelles { get; private set; }
+    public int DecalageActuel { get; private set; }
+    
+    public event System.Action OnNewChallenge; //update l'ui
 
     private void Start()
     {
+        GenerateNewChallenge();
+        Debug.Log($"Mot à trouver : {MotActuel} | décalage : {DecalageActuel} | mot crypté : {MotCrypte} | nombre crypté : {NombreCrypte}");
+    }
+
+
+    public void GenerateNewChallenge(int nombreDeFleches = 5)
+    {
         GenerateRandomWord();
-        Debug.Log(MotActuel);
+        GenerateRandomNumber();
+        DecalageActuel = _nombresEnLettres.IndexOf(NombreActuel) + 1;
+
+        FlechesActuelles = GenerateArrows(nombreDeFleches);
+        NombreCrypte = EncryptWithArrows(NombreActuel, FlechesActuelles);
+        MotCrypte = EncryptCaesar(MotActuel, DecalageActuel);
+
+        OnNewChallenge?.Invoke();
     }
 
     private void GeneratePassword() //genere un mdp avec lettres uniquement
@@ -96,6 +124,97 @@ public class PasswordGenerator : MonoBehaviour
 
         return resultat;
     }
-
     
+    public List<ArrowDirection> GenerateArrows(int nombreDeFleches = 5)
+    {
+        var directionsPossibles = (ArrowDirection[])System.Enum.GetValues(typeof(ArrowDirection));
+        var fleches = new List<ArrowDirection>();
+
+        for (int i = 0; i < nombreDeFleches; i++)
+        {
+            fleches.Add(directionsPossibles[Random.Range(0, directionsPossibles.Length)]);
+        }
+
+        return fleches;
+    }
+    
+    public (string motCrypte, List<ArrowDirection> fleches) GenerateRandomNumberEncryptedWithArrows(int nombreDeFleches = 5)
+    {
+        string nombre = GenerateRandomNumber();
+        List<ArrowDirection> fleches = GenerateArrows(nombreDeFleches);
+        return (EncryptWithArrows(nombre, fleches), fleches);
+    }
+
+
+    public string EncryptWithArrows(string texte, List<ArrowDirection> fleches)
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("GameManager.Instance introuvable : impossible d'utiliser l'AlphabetTable.");
+            return texte;
+        }
+
+        char[,] table = GameManager.Instance.GetAlphabetTable();
+        int rows = table.GetLength(0);
+        int cols = table.GetLength(1);
+
+        string resultat = "";
+
+        foreach (char lettre in texte.ToUpper())
+        {
+            if (lettre == ' ' || lettre == '-')
+            {
+                resultat += lettre; // garde les tirets
+                continue;
+            }
+
+            (int row, int col) position = FindLetterPosition(table, lettre);
+
+            foreach (ArrowDirection fleche in fleches)
+            {
+                position = ApplyArrow(position, fleche, rows, cols);
+            }
+
+            resultat += table[position.row, position.col];
+        }
+
+        return resultat;
+    }
+
+    private (int row, int col) FindLetterPosition(char[,] table, char lettre)
+    {
+        for (int row = 0; row < table.GetLength(0); row++)
+        {
+            for (int col = 0; col < table.GetLength(1); col++)
+            {
+                if (table[row, col] == lettre)
+                {
+                    return (row, col);
+                }
+            }
+        }
+
+        return (0, 0);
+    }
+
+    private (int row, int col) ApplyArrow((int row, int col) position, ArrowDirection direction, int rows, int cols)
+    {
+        switch (direction)
+        {
+            case ArrowDirection.Up:
+                position.row = (position.row - 1 + rows) % rows;
+                break;
+            case ArrowDirection.Down:
+                position.row = (position.row + 1) % rows;
+                break;
+            case ArrowDirection.Left:
+                position.col = (position.col - 1 + cols) % cols;
+                break;
+            case ArrowDirection.Right:
+                position.col = (position.col + 1) % cols;
+                break;
+        }
+
+        return position;
+    }
 }
