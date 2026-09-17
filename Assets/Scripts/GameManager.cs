@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GenerateAlphabetTable();
-        print(AlphabetTable);
+        Debug.Log(string.Join(", ", AlphabetTable));;
     }
 
     private void GenerateAlphabetTable()

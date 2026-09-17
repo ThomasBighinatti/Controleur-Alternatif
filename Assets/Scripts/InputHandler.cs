@@ -11,14 +11,17 @@ public class InputHandler : MonoBehaviour
 
     public void GrabFromInputField(string input)
     {
-        inputText = input;
+        inputText = input.ToUpper();
         DisplayReactionToInput();
         CheckWordGuessed();
     }
 
     private void DisplayReactionToInput()
     {
-        
+        if (inputText == passwordGenerator.MotActuel)
+            Debug.Log("Bon mot");
+        else 
+            Debug.Log("pas bon mot");
         reactionTextBox.text = "Réponse entrée : " + inputText;
         reactionGroup.SetActive(true);
     }
