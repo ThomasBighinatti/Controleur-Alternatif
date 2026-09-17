@@ -8,15 +8,24 @@ public class PasswordGenerator : MonoBehaviour
      [SerializeField] private int _passwordLength;
      [SerializeField] private int _sentenceLength;
 
-    // Le mot que le joueur doit deviner actuellement
+    private List<string> _nombresEnLettres = new List<string>
+    {
+        "UN", "DEUX", "TROIS", "QUATRE", "CINQ", "SIX", "SEPT", "HUIT", "NEUF", "DIX",
+        "ONZE", "DOUZE", "TREIZE", "QUATORZE", "QUINZE", "SEIZE",
+        "DIX-SEPT", "DIX-HUIT", "DIX-NEUF", "VINGT",
+        "VINGT ET UN", "VINGT-DEUX", "VINGT-TROIS", "VINGT-QUATRE", "VINGT-CINQ",
+        "VINGT-SIX", "VINGT-SEPT", "VINGT-HUIT", "VINGT-NEUF", "TRENTE", "TRENTE ET UN"
+    };
+    
     public string MotActuel { get; private set; }
 
     private void Start()
     {
         GenerateRandomWord();
+        Debug.Log(MotActuel);
     }
 
-    private void GeneratePassword()
+    private void GeneratePassword() //genere un mdp avec lettres uniquement
     {
         string password = "";
         for (int i = 0; i < _passwordLength; i++)
@@ -30,14 +39,14 @@ public class PasswordGenerator : MonoBehaviour
     {
         List<string> randomWords = new List<string>
         {
-            // 4 à 5 lettres
+            // 4 a 5 lettres
             "VELO", "JUGE", "KIWI", "TISSU", "LOUPE", "BANJO", "FOUET", "PLOMB", "YACHT", "GIVRE",
 
-            // 6 à 7 lettres
+            // 6 a 7 lettres
             "CACTUS", "FRELON", "BUREAU", "DONJON", "MOUETTE", "CLAQUE", "POIREAU", "LUSTRE", "BRONZE", "TREFLE",
             "SOUFFLE", "JOCKEY", "WHISKY", "VIANDE", "BALCON",
 
-            // 8 à 9 lettres
+            // 8 a 9 lettres
             "TABOURET", "CHOUETTE", "RADIATEUR", "BROCOLI", "KANGOUROU", "CUILLERE", "TRAMWAY", "AQUARIUM",
             "POCHETTE", "VENDREDI", "BOUCHON", "CROQUIS",
 
@@ -48,8 +57,21 @@ public class PasswordGenerator : MonoBehaviour
         MotActuel = randomWords[Random.Range(0, randomWords.Count)];
         return MotActuel;
     }
-    
-    public string EncryptCaesar(string texte, int offset)
+
+    public string GenerateRandomNumber() //genere un nombre en lettres
+    {
+        MotActuel = _nombresEnLettres[Random.Range(0, _nombresEnLettres.Count)];
+        return MotActuel;
+    }
+
+    public string GenerateRandomNumberEncrypted()  //nombre en lettre crypté avec césar
+    {
+        string nombre = GenerateRandomNumber();
+        int decalage = Random.Range(1, 32);
+        return EncryptCaesar(nombre, decalage);
+    }
+
+    public string EncryptCaesar(string texte, int offset) //chiffrement césar 
     {
         string resultat = "";
 
