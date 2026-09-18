@@ -8,16 +8,17 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     private char[,] _alphabetTable = new char[6, 5];
     private bool _alphabetTableReady;
+    private bool _isGameLost;
 
     private void Awake()
     { 
         if (Instance != null)
         { 
-            Destroy(transform.parent.gameObject); 
+            Destroy(this.gameObject); 
             return;
         }
         Instance = this; 
-        DontDestroyOnLoad(transform.parent);
+        DontDestroyOnLoad(this.gameObject);
 
         GenerateAlphabetTable();
     }
@@ -85,6 +86,7 @@ public class GameManager : MonoBehaviour
 
     public void ChangeStateToGame() => CurrentGameState = GameState.Game;
     public void ChangeStateToMenu() => CurrentGameState = GameState.Menu;
+    public void QuitGame() => Application.Quit();
 
     public GameState CurrentGameState
     {
@@ -96,6 +98,18 @@ public class GameManager : MonoBehaviour
             Debug.Log(_currentGameState);
             SceneManager.LoadScene(GetSceneByState());
             
+        }
+    }
+
+    public float _timer = 300f;
+
+    public void UpdateTimer()
+    {
+        _timer -= Time.deltaTime;
+        if (_timer <= 0)
+        {
+            _isGameLost = true;
+            Debug.unityLogger.Log("Perdu ");
         }
     }
 }

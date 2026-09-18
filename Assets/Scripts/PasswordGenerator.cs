@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public enum ArrowDirection
 {
@@ -11,10 +14,25 @@ public enum ArrowDirection
 
 public class PasswordGenerator : MonoBehaviour
 {
+    public static PasswordGenerator Instance;
+
+    private void Awake()
+    { 
+        if (Instance != null)
+        { 
+            Destroy(this.gameObject); 
+            return;
+        }
+        
+        Instance = this; 
+        DontDestroyOnLoad(this.gameObject);
+        
+    }
+    
     
     private string _alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-     [SerializeField] private int _passwordLength;
-     [SerializeField] private int _sentenceLength;
+    [SerializeField] private int _passwordLength;
+    [SerializeField] private int _sentenceLength;
 
     private List<string> _nombresEnLettres = new List<string>
     {
@@ -36,10 +54,32 @@ public class PasswordGenerator : MonoBehaviour
 
     private void Start()
     {
+        
         GenerateNewChallenge();
-        Debug.Log($"Mot à trouver : {MotActuel} | décalage : {DecalageActuel} | mot crypté : {MotCrypte} | nombre crypté : {NombreCrypte}");
+        Debug.Log(MotActuel);
+        Debug.Log(NombreCrypte);
+        Debug.Log(MotCrypte);
+        Debug.Log(NombreCrypte);
+        Debug.Log(DecalageActuel);
+        
+        
+    }
+/*
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        GenerateNewChallenge();
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+*/
 
     public void GenerateNewChallenge(int nombreDeFleches = 5)
     {
@@ -97,6 +137,8 @@ public class PasswordGenerator : MonoBehaviour
     {
         string nombre = GenerateRandomNumber();
         int decalage = Random.Range(1, 32);
+        if (decalage == 26)
+            decalage += Random.Range(1, 6);
         return EncryptCaesar(nombre, decalage);
     }
 
@@ -150,7 +192,7 @@ public class PasswordGenerator : MonoBehaviour
     {
         if (GameManager.Instance == null)
         {
-            Debug.LogWarning("GameManager.Instance introuvable : impossible d'utiliser l'AlphabetTable.");
+            Debug.LogWarning("pas de gamemanager");
             return texte;
         }
 

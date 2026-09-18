@@ -4,53 +4,79 @@ using UnityEngine;
 
 public class PuzzleUI : MonoBehaviour
 {
-    [SerializeField] private PasswordGenerator passwordGenerator;
     [SerializeField] private TMP_Text grilleText;
     [SerializeField] private TMP_Text motCrypteText;
     [SerializeField] private TMP_Text nombreCrypteText;
     [SerializeField] private TMP_Text flechesText;
+    [SerializeField] private TMP_Text timerText;
+    
+    private bool _isSubscribed;
+
+    private void Start()
+    {
+        SubscribeToChallenge();
+        RefreshDisplay();
+    }
 
     private void OnEnable()
     {
-        if (passwordGenerator != null)
-        {
-            passwordGenerator.OnNewChallenge += RefreshDisplay;
-        }
+        SubscribeToChallenge();
+        RefreshDisplay();
     }
 
     private void OnDisable()
     {
-        if (passwordGenerator != null)
+        UnsubscribeFromChallenge();
+    }
+
+    private void SubscribeToChallenge()
+    {
+        if (!_isSubscribed && PasswordGenerator.Instance != null)
         {
-            passwordGenerator.OnNewChallenge -= RefreshDisplay;
+            PasswordGenerator.Instance.OnNewChallenge += RefreshDisplay;
+            _isSubscribed = true;
         }
     }
 
-    private void Start()
+    private void UnsubscribeFromChallenge()
     {
-        RefreshDisplay();
+        if (_isSubscribed && PasswordGenerator.Instance != null)
+        {
+            PasswordGenerator.Instance.OnNewChallenge -= RefreshDisplay;
+            _isSubscribed = false;
+        }
+    }
+
+    private void Update()
+    {
+        Updatetimer();
+    }
+
+    private void Updatetimer()
+    {
+        //timerText.text = GameManager.Instance._timer.ToString();
     }
     
     public void RefreshDisplay()
     {
-        if (passwordGenerator == null)
+        if (PasswordGenerator.Instance == null)
         {
             return;
         }
 
         if (motCrypteText != null)
         {
-            motCrypteText.text = passwordGenerator.MotCrypte;
+            motCrypteText.text = PasswordGenerator.Instance.MotCrypte;
         }
 
         if (nombreCrypteText != null)
         {
-            nombreCrypteText.text = passwordGenerator.NombreCrypte;
+            nombreCrypteText.text = PasswordGenerator.Instance.NombreCrypte;
         }
 
         if (flechesText != null)
         {
-            flechesText.text = FormatFleches(passwordGenerator.FlechesActuelles);
+            flechesText.text = FormatFleches(PasswordGenerator.Instance.FlechesActuelles);
         }
 
         if (grilleText != null && GameManager.Instance != null)
@@ -59,7 +85,7 @@ public class PuzzleUI : MonoBehaviour
         }
     }
 
-    //inverse des flèches utilisée pour le chiffrement
+    // inverse des flèches utilisée pour le chiffrement
     private string FormatFleches(System.Collections.Generic.List<ArrowDirection> fleches)
     {
         if (fleches == null)
@@ -110,7 +136,7 @@ public class PuzzleUI : MonoBehaviour
                 texte.Append(table[row, col]);
                 if (col < cols - 1)
                 {
-                    texte.Append("  "); //pour mieux lire
+                    texte.Append("  "); // pour mieux lire
                 }
             }
 
