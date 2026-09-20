@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,15 +10,20 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private TMP_Text reactionTextBox;
     [SerializeField] private PasswordGenerator passwordGenerator;
 
-    TMP_InputField inputfield;
+    private TMP_InputField _inputField;
+
     private void Awake()
     {
-        inputfield = GetComponent<TMP_InputField>();
+        _inputField = GetComponent<TMP_InputField>();
     }
-    
 
     public void GrabFromInputField(string input)
     {
+        if (GameManager.Instance != null && GameManager.Instance.PartieTerminee)
+        {
+            return; 
+        }
+
         inputText = input;
         bool correct = CheckWordGuessed();
         DisplayReactionToInput(correct);
@@ -28,23 +31,26 @@ public class InputHandler : MonoBehaviour
         if (correct)
         {
             passwordGenerator.GenerateNewChallenge(); //relance avec nouvelles fleches et nouveau mot mais meme grille
-            //TODO
+
+            if (_inputField != null)
+            {
+                _inputField.text = "";
+                _inputField.ActivateInputField();
+                EventSystem.current.SetSelectedGameObject(gameObject);
+            }
         }
-        EventSystem.current.SetSelectedGameObject(gameObject);
-        
-        inputfield.text = "";
-        inputfield.ActivateInputField();
-        
+        else if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoseTime(20f); //-20s sur timer
+        }
     }
-    
-    
+
     private void DisplayReactionToInput(bool correct)
     {
         reactionTextBox.text = correct
             ? $"Bravo, la réponse était \"{passwordGenerator.MotActuel}\" ."
-            : $"Ce n'est pas : {inputText} — dommage."; //-20s sur timer
+            : $"Ce n'est pas : {inputText} — dommage. (-20s)";
         //reactionGroup.SetActive(true);
-        
     }
 
     private bool CheckWordGuessed()

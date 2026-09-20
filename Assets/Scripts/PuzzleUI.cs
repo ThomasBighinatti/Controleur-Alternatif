@@ -4,79 +4,67 @@ using UnityEngine;
 
 public class PuzzleUI : MonoBehaviour
 {
+    [SerializeField] private PasswordGenerator passwordGenerator;
     [SerializeField] private TMP_Text grilleText;
     [SerializeField] private TMP_Text motCrypteText;
     [SerializeField] private TMP_Text nombreCrypteText;
     [SerializeField] private TMP_Text flechesText;
     [SerializeField] private TMP_Text timerText;
-    
-    private bool _isSubscribed;
-
-    private void Start()
-    {
-        SubscribeToChallenge();
-        RefreshDisplay();
-    }
 
     private void OnEnable()
     {
-        SubscribeToChallenge();
-        RefreshDisplay();
+        if (passwordGenerator != null)
+        {
+            passwordGenerator.OnNewChallenge += RefreshDisplay;
+        }
     }
 
     private void OnDisable()
     {
-        UnsubscribeFromChallenge();
-    }
-
-    private void SubscribeToChallenge()
-    {
-        if (!_isSubscribed && PasswordGenerator.Instance != null)
+        if (passwordGenerator != null)
         {
-            PasswordGenerator.Instance.OnNewChallenge += RefreshDisplay;
-            _isSubscribed = true;
+            passwordGenerator.OnNewChallenge -= RefreshDisplay;
         }
     }
 
-    private void UnsubscribeFromChallenge()
+    private void Start()
     {
-        if (_isSubscribed && PasswordGenerator.Instance != null)
-        {
-            PasswordGenerator.Instance.OnNewChallenge -= RefreshDisplay;
-            _isSubscribed = false;
-        }
+        RefreshDisplay();
     }
 
     private void Update()
     {
-        Updatetimer();
+        if (timerText == null || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        float temps = GameManager.Instance.TimeLeft;
+        int minutes = Mathf.FloorToInt(temps / 60f);
+        int secondes = Mathf.FloorToInt(temps % 60f);
+        timerText.text = $"{minutes:00}:{secondes:00}";
     }
 
-    private void Updatetimer()
-    {
-        //timerText.text = GameManager.Instance._timer.ToString();
-    }
-    
     public void RefreshDisplay()
     {
-        if (PasswordGenerator.Instance == null)
+        if (passwordGenerator == null)
         {
             return;
         }
 
         if (motCrypteText != null)
         {
-            motCrypteText.text = PasswordGenerator.Instance.MotCrypte;
+            motCrypteText.text = passwordGenerator.MotCrypte;
         }
 
         if (nombreCrypteText != null)
         {
-            nombreCrypteText.text = PasswordGenerator.Instance.NombreCrypte;
+            nombreCrypteText.text = passwordGenerator.NombreCrypte;
         }
 
         if (flechesText != null)
         {
-            flechesText.text = FormatFleches(PasswordGenerator.Instance.FlechesActuelles);
+            flechesText.text = FormatFleches(passwordGenerator.FlechesActuelles);
         }
 
         if (grilleText != null && GameManager.Instance != null)
@@ -85,7 +73,7 @@ public class PuzzleUI : MonoBehaviour
         }
     }
 
-    // inverse des flèches utilisée pour le chiffrement
+    //inverse des flèches utilisée pour le chiffrement
     private string FormatFleches(System.Collections.Generic.List<ArrowDirection> fleches)
     {
         if (fleches == null)
@@ -97,7 +85,7 @@ public class PuzzleUI : MonoBehaviour
 
         foreach (ArrowDirection fleche in fleches)
         {
-            texte.Append(InverserFleche(fleche) switch
+            texte.Append(ReverseArrows(fleche) switch
             {
                 ArrowDirection.Up => "↑",
                 ArrowDirection.Down => "↓",
@@ -111,7 +99,7 @@ public class PuzzleUI : MonoBehaviour
         return texte.ToString().TrimEnd();
     }
 
-    private ArrowDirection InverserFleche(ArrowDirection fleche)
+    private ArrowDirection ReverseArrows(ArrowDirection fleche)
     {
         return fleche switch
         {
@@ -136,7 +124,7 @@ public class PuzzleUI : MonoBehaviour
                 texte.Append(table[row, col]);
                 if (col < cols - 1)
                 {
-                    texte.Append("  "); // pour mieux lire
+                    texte.Append("  "); //pour mieux lire
                 }
             }
 

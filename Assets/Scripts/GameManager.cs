@@ -8,21 +8,65 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     private char[,] _alphabetTable = new char[6, 5];
     private bool _alphabetTableReady;
-    private bool _isGameLost;
+
+    [SerializeField] private float dureeInitiale = 120f; // en secondes
+
+    public float TimeLeft { get; private set; }
+    public bool PartieTerminee { get; private set; }
+
+    public event System.Action OnTempsEcoule;
 
     private void Awake()
     { 
         if (Instance != null)
         { 
-            Destroy(this.gameObject); 
+            Destroy(gameObject); 
             return;
         }
         Instance = this; 
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
 
         GenerateAlphabetTable();
+        TimeLeft = dureeInitiale;
     }
-    
+
+    private void Update()
+    {
+        if (CurrentGameState != GameState.Game || PartieTerminee)
+        {
+            return;
+        }
+
+        TimeLeft -= Time.deltaTime;
+
+        if (TimeLeft <= 0f)
+        {
+            TimeLeft = 0f;
+            EndGame();
+        }
+    }
+
+    public void LoseTime(float secondes)
+    {
+        if (PartieTerminee)
+        {
+            return;
+        }
+
+        TimeLeft = Mathf.Max(0f, TimeLeft - secondes);
+
+        if (TimeLeft <= 0f)
+        {
+            EndGame();
+        }
+    }
+
+    private void EndGame()
+    {
+        PartieTerminee = true;
+        OnTempsEcoule?.Invoke();
+    }
+
     public char[,] GetAlphabetTable()
     {
         if (!_alphabetTableReady)
@@ -33,31 +77,42 @@ public class GameManager : MonoBehaviour
         return _alphabetTable;
     }
 
+    public static bool IsCorner(int row, int col, int rows, int cols)
+    {
+        return (row == 0 || row == rows - 1) && (col == 0 || col == cols - 1);
+    }
+
+    private const char CaseVide = '•'; 
+
     private void GenerateAlphabetTable()
     {
-        const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
         int rows = _alphabetTable.GetLength(0);
         int cols = _alphabetTable.GetLength(1);
-        int totalCases = rows * cols;
-        
+
         List<char> lettres = new List<char>(alphabet.ToCharArray());
-        while (lettres.Count < totalCases)
-        {
-            lettres.Add(alphabet[Random.Range(0, alphabet.Length)]);
-        }
-        
+
         //je mélange je mélange je mélange (kaaris)
         for (int i = lettres.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
             (lettres[i], lettres[j]) = (lettres[j], lettres[i]);
         }
-
-        for (int i = 0; i < totalCases; i++)
+        
+        int index = 0;
+        for (int row = 0; row < rows; row++)
         {
-            int row = i / cols;
-            int col = i % cols;
-            _alphabetTable[row, col] = lettres[i];
+            for (int col = 0; col < cols; col++)
+            {
+                if (IsCorner(row, col, rows, cols))
+                {
+                    _alphabetTable[row, col] = CaseVide;
+                    continue;
+                }
+
+                _alphabetTable[row, col] = lettres[index];
+                index++;
+            }
         }
 
         _alphabetTableReady = true;
@@ -86,7 +141,19 @@ public class GameManager : MonoBehaviour
 
     public void ChangeStateToGame() => CurrentGameState = GameState.Game;
     public void ChangeStateToMenu() => CurrentGameState = GameState.Menu;
-    public void QuitGame() => Application.Quit();
+    
+    public void Replay() => ChangeStateToGame();
+    
+    public void GoToMainMenu() => ChangeStateToMenu();
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 
     public GameState CurrentGameState
     {
@@ -96,20 +163,14 @@ public class GameManager : MonoBehaviour
             Debug.Log(_currentGameState);
             _currentGameState = value;
             Debug.Log(_currentGameState);
+
+            if (value == GameState.Game)
+            {
+                TimeLeft = dureeInitiale;
+                PartieTerminee = false;
+            }
+
             SceneManager.LoadScene(GetSceneByState());
-            
-        }
-    }
-
-    public float _timer = 300f;
-
-    public void UpdateTimer()
-    {
-        _timer -= Time.deltaTime;
-        if (_timer <= 0)
-        {
-            _isGameLost = true;
-            Debug.unityLogger.Log("Perdu ");
         }
     }
 }
