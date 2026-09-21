@@ -72,8 +72,7 @@ public class PuzzleUI : MonoBehaviour
             grilleText.text = FormatGrid(GameManager.Instance.GetAlphabetTable());
         }
     }
-
-    //inverse des flèches utilisée pour le chiffrement
+    
     private string FormatFleches(System.Collections.Generic.List<ArrowDirection> fleches)
     {
         if (fleches == null)
@@ -83,9 +82,9 @@ public class PuzzleUI : MonoBehaviour
 
         var texte = new StringBuilder();
 
-        foreach (ArrowDirection fleche in fleches)
+        for (int i = fleches.Count - 1; i >= 0; i--)
         {
-            texte.Append(ReverseArrows(fleche) switch
+            texte.Append(ReverseArrows(fleches[i]) switch
             {
                 ArrowDirection.Up => "↑",
                 ArrowDirection.Down => "↓",
