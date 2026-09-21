@@ -481,7 +481,7 @@ MonoBehaviour:
   inputText: 
   reactionGroup: {fileID: 0}
   reactionTextBox: {fileID: 680288049}
-  passwordGenerator: {fileID: 0}
+  passwordGenerator: {fileID: 1504596106}
 --- !u!1 &349420072
 GameObject:
   m_ObjectHideFlags: 0
