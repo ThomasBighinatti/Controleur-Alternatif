@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
             TimeLeft = 0f;
             EndGame();
         }
+        
     }
 
     public void LoseTime(float secondes)
