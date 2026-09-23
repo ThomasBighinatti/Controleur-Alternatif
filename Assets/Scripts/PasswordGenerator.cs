@@ -44,8 +44,11 @@ public class PasswordGenerator : MonoBehaviour
     public void GenerateNewChallenge(int nombreDeFleches = 5)
     {
         GenerateRandomWord();
-        GenerateRandomNumber();
-        DecalageActuel = _nombresEnLettres.IndexOf(NombreActuel) + 1;
+        do
+        {
+            GenerateRandomNumber();
+            DecalageActuel = _nombresEnLettres.IndexOf(NombreActuel) + 1;
+        } while (DecalageActuel == 26);
 
         FlechesActuelles = GenerateArrows(nombreDeFleches);
         NombreCrypte = EncryptWithArrows(NombreActuel, FlechesActuelles);
@@ -150,7 +153,6 @@ public class PasswordGenerator : MonoBehaviour
     {
         if (GameManager.Instance == null)
         {
-            Debug.LogWarning("GameManager.Instance introuvable : impossible d'utiliser l'AlphabetTable.");
             return texte;
         }
 

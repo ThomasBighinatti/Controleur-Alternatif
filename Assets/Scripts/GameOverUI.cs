@@ -4,19 +4,35 @@ public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private GameObject panel;
 
+    private bool _abonne;
+
     private void OnEnable()
     {
-        if (GameManager.Instance != null)
+        SAbonner();
+    }
+    
+    private void Start()
+    {
+        SAbonner();
+    }
+
+    private void SAbonner()
+    {
+        if (_abonne || GameManager.Instance == null)
         {
-            GameManager.Instance.OnTempsEcoule += AfficherGameOver;
+            return;
         }
+
+        GameManager.Instance.OnTempsEcoule += AfficherGameOver;
+        _abonne = true;
     }
 
     private void OnDisable()
     {
-        if (GameManager.Instance != null)
+        if (_abonne && GameManager.Instance != null)
         {
             GameManager.Instance.OnTempsEcoule -= AfficherGameOver;
+            _abonne = false;
         }
     }
 
