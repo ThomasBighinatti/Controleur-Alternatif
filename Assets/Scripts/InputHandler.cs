@@ -56,6 +56,7 @@ public class InputHandler : MonoBehaviour
 
         if (correct)
         {
+            SoundManager.Instance.SoundPlay(MainSfx.Valid);
             passwordGenerator.GenerateNewChallenge(); //relance avec nouvelles fleches et nouveau mot mais meme grille
 
             if (_inputField != null)
@@ -98,6 +99,7 @@ public class InputHandler : MonoBehaviour
 
             _flashCoroutine = StartCoroutine(RedFlashing());
         }
+        SoundManager.Instance.SoundPlay(MainSfx.Wrong);
     }
 
     private IEnumerator Shake()

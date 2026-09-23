@@ -479,6 +479,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ac280fd5ee79ebc4f8cdc5c679a1d668, type: 3}
   - {fileID: 8300000, guid: bb9cb52df497b09429430f4574cc1640, type: 3}
   - {fileID: 8300000, guid: 125d539aae90fea499d5a220d83b9258, type: 3}
+  - {fileID: 8300000, guid: e5638f7705b6b03488f0e8905484c9b3, type: 3}
+  - {fileID: 8300000, guid: 106d0ac6b0c021943a71f4c7b543b06d, type: 3}
   sfxSource: {fileID: 74627523}
 --- !u!4 &74627525
 Transform:

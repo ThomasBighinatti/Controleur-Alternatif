@@ -4,7 +4,9 @@ public enum MainSfx
 {
     KeyPress = 0,
     StartWawa = 1,
-    Monkey = 2
+    Monkey = 2,
+    Valid = 3,
+    Wrong = 4
 }
 
 public class SoundManager : MonoBehaviour
