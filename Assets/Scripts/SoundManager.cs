@@ -28,6 +28,11 @@ public class SoundManager : MonoBehaviour
             
         Instance = this;
     }
+
+    private void Start()
+    {
+        SoundPlay(MainSfx.StartWawa);
+    }
     
     public void OnInputValueChanged(string value)
     {
