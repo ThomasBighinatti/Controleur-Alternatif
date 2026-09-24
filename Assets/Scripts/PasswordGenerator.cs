@@ -44,11 +44,11 @@ public class PasswordGenerator : MonoBehaviour
     public void GenerateNewChallenge(int nombreDeFleches = 5)
     {
         GenerateRandomWord();
-        do
-        {
-            GenerateRandomNumber();
-            DecalageActuel = _nombresEnLettres.IndexOf(NombreActuel) + 1;
-        } while (DecalageActuel == 26);
+
+        
+        int index = Random.Range(0, 15);
+        NombreActuel = _nombresEnLettres[index];
+        DecalageActuel = index + 1;
 
         FlechesActuelles = GenerateArrows(nombreDeFleches);
         NombreCrypte = EncryptWithArrows(NombreActuel, FlechesActuelles);

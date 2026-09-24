@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.IO.Ports;
 
@@ -11,9 +9,14 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     private char[,] _alphabetTable = new char[6, 5];
     private bool _alphabetTableReady;
+
+    [Header("Levier (port série)")]
+    [SerializeField] private string portSerie = "COM3";
+    [SerializeField] private int baudRate = 115200;
+    private SerialPort _sp;
     
-    public static SerialPort sp = new SerialPort("COM4", 115200);
-    public int cleCesarSwitch;
+    public int LeverValue { get; private set; }
+
     [SerializeField] private float dureeInitiale = 120f; // en secondes
     
     
@@ -40,20 +43,23 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        sp.Open();
-       //sp.ReadTimeout = 16;
+        try
+        {
+            _sp = new SerialPort(portSerie, baudRate);
+            _sp.ReadTimeout = 50; // court, pour ne jamais bloquer une frame
+            _sp.Open();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Port série ({portSerie}) indisponible, les leviers seront ignorés : {e.Message}");
+            _sp = null;
+        }
     }
 
     private void Update()
     {
+        LireLevier();
 
-        if (sp.IsOpen)
-        {
-            //cleCesarSwitch =;
-            Debug.Log(sp.ReadLine());
-        }
-        
-        
         if (CurrentGameState != GameState.Game || PartieTerminee)
         {
             return;
@@ -67,6 +73,34 @@ public class GameManager : MonoBehaviour
             EndGame();
         }
         
+    }
+    private void LireLevier()
+    {
+        if (_sp == null || !_sp.IsOpen)
+        {
+            return;
+        }
+
+        try
+        {
+            string ligne = _sp.ReadLine();
+            if (int.TryParse(ligne.Trim(), out int valeur))
+            {
+                LeverValue = Mathf.Clamp(valeur, 0, 15);
+            }
+        }
+        catch (System.TimeoutException)
+        {
+            // rien de nouveau ce frame, on garde LeverValue tel quel
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (_sp != null && _sp.IsOpen)
+        {
+            _sp.Close();
+        }
     }
 
     public void LoseTime(float secondes)

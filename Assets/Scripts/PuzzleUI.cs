@@ -35,16 +35,35 @@ public class PuzzleUI : MonoBehaviour
 
     private void Update()
     {
-        if (timerText == null || GameManager.Instance == null)
+        if (GameManager.Instance != null)
+        {
+            float temps = GameManager.Instance.TimeLeft;
+
+            if (timerText != null)
+            {
+                int minutes = Mathf.FloorToInt(temps / 60f);
+                int secondes = Mathf.FloorToInt(temps % 60f);
+                timerText.text = $"{minutes:00}:{secondes:00}";
+            }
+
+            if (scoreText != null)
+            {
+                scoreText.text = "Victoires : " + GameManager.Instance.victoires;
+            }
+        }
+
+        MettreAJourMotCrypte();
+    }
+    
+    private void MettreAJourMotCrypte()
+    {
+        if (motCrypteText == null || passwordGenerator == null || GameManager.Instance == null)
         {
             return;
         }
 
-        float temps = GameManager.Instance.TimeLeft;
-        int minutes = Mathf.FloorToInt(temps / 60f);
-        int secondes = Mathf.FloorToInt(temps % 60f);
-        timerText.text = $"{minutes:00}:{secondes:00}";
-        scoreText.text = "Victoires : " + GameManager.Instance.victoires.ToString();
+        bool leviersCorrects = GameManager.Instance.LeverValue == passwordGenerator.DecalageActuel;
+        motCrypteText.text = leviersCorrects ? passwordGenerator.MotActuel : passwordGenerator.MotCrypte;
     }
 
     public void RefreshDisplay()
