@@ -10,6 +10,7 @@ public class PuzzleUI : MonoBehaviour
     [SerializeField] private TMP_Text nombreCrypteText;
     [SerializeField] private TMP_Text flechesText;
     [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text scoreText;
 
     private void OnEnable()
     {
@@ -43,6 +44,7 @@ public class PuzzleUI : MonoBehaviour
         int minutes = Mathf.FloorToInt(temps / 60f);
         int secondes = Mathf.FloorToInt(temps % 60f);
         timerText.text = $"{minutes:00}:{secondes:00}";
+        scoreText.text = "Victoires : " + GameManager.Instance.victoires.ToString();
     }
 
     public void RefreshDisplay()

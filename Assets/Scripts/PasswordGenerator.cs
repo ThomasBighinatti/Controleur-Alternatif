@@ -53,7 +53,7 @@ public class PasswordGenerator : MonoBehaviour
         FlechesActuelles = GenerateArrows(nombreDeFleches);
         NombreCrypte = EncryptWithArrows(NombreActuel, FlechesActuelles);
         MotCrypte = EncryptCaesar(MotActuel, DecalageActuel);
-
+        Debug.Log(MotActuel);
         OnNewChallenge?.Invoke();
     }
 

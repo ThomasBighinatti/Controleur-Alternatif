@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     public event System.Action OnTempsEcoule;
 
+    public int victoires = 0;
+
     private void Awake()
     { 
         if (Instance != null)
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void EndGame()
+    public void EndGame()
     {
         PartieTerminee = true;
         OnTempsEcoule?.Invoke();

@@ -58,6 +58,7 @@ public class InputHandler : MonoBehaviour
         {
             SoundManager.Instance.SoundPlay(MainSfx.Valid);
             passwordGenerator.GenerateNewChallenge(); //relance avec nouvelles fleches et nouveau mot mais meme grille
+            GameManager.Instance.victoires++;
 
             if (_inputField != null)
             {
