@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private GameObject panel;
+    [SerializeField] private PasswordGenerator passwordGenerator;
 
     private bool _abonne;
 
@@ -57,5 +59,14 @@ public class GameOverUI : MonoBehaviour
     public void OnClicMenu()
     {
         GameManager.Instance.GoToMainMenu();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance.TimeLeft <= 0)
+        {
+            GameManager.Instance.Replay();
+            GameManager.Instance.victoires = 0;
+        }
     }
 }

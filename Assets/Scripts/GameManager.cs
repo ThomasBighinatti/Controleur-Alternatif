@@ -126,7 +126,6 @@ public class GameManager : MonoBehaviour
         return CurrentGameState switch
         {
             GameState.Game => "Game", 
-            GameState.Menu => "Menu",
             _ => ""
         };
     }

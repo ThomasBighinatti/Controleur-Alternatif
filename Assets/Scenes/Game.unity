@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be391c4aa0eb67649a48c04924fa6694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  dureeInitiale: 300
+  dureeInitiale: 321
   victoires: 0
   gameState: 0
 --- !u!4 &50943938
@@ -1209,6 +1209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameOverUI
   panel: {fileID: 367330482}
+  passwordGenerator: {fileID: 1504596106}
 --- !u!1 &674931528
 GameObject:
   m_ObjectHideFlags: 0
