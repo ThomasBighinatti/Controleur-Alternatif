@@ -221,6 +221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be391c4aa0eb67649a48c04924fa6694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  portSerie: COM3
+  baudRate: 115200
   dureeInitiale: 321
   victoires: 0
   gameState: 0
@@ -338,11 +340,11 @@ RectTransform:
   - {fileID: 680288048}
   - {fileID: 380785108}
   - {fileID: 1678926674}
-  - {fileID: 1603312807}
   - {fileID: 1614167391}
   - {fileID: 1982047600}
   - {fileID: 1046814144}
   - {fileID: 367330485}
+  - {fileID: 1603312807}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
