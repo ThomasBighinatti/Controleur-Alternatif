@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-
+using System.IO.Ports;
 
 
 public class GameManager : MonoBehaviour
@@ -10,7 +11,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     private char[,] _alphabetTable = new char[6, 5];
     private bool _alphabetTableReady;
-
+    
+    public static SerialPort sp = new SerialPort("COM4", 115200);
+    public int cleCesarSwitch;
     [SerializeField] private float dureeInitiale = 120f; // en secondes
     
     
@@ -33,8 +36,22 @@ public class GameManager : MonoBehaviour
         TimeLeft = dureeInitiale;
     }
 
+    private void Start()
+    {
+        sp.Open();
+       //sp.ReadTimeout = 16;
+    }
+
     private void Update()
     {
+
+        if (sp.IsOpen)
+        {
+            //cleCesarSwitch =;
+            Debug.Log(sp.ReadLine());
+        }
+        
+        
         if (CurrentGameState != GameState.Game || PartieTerminee)
         {
             return;
