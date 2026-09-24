@@ -49,6 +49,8 @@ public class GameOverUI : MonoBehaviour
     public void Replay()
     {
         GameManager.Instance.Replay();
+        GameManager.Instance.victoires = 0;
+
     }
     
     public void QuitGame()
