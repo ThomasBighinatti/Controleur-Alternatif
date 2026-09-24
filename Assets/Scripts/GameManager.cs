@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
+
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -10,7 +12,8 @@ public class GameManager : MonoBehaviour
     private bool _alphabetTableReady;
 
     [SerializeField] private float dureeInitiale = 120f; // en secondes
-
+    
+    
     public float TimeLeft { get; private set; }
     public bool PartieTerminee { get; private set; }
 
